@@ -75,7 +75,7 @@ const setMovement = () => {
 function animate() {
   requestAnimationFrame(animate);
 
-  if (cube.position.x <= 10 && moveRight) {
+  if (moveRight) {
     cube.position.x += 0.1;
     if (cube.position.x >= 10) {
       setMovement();
@@ -90,13 +90,11 @@ function animate() {
     }
   }
 
-  // cube.rotation.x += 0.01;
-  // cube.rotation.y += 0.01;
+  cube.rotation.x += 0.01;
+  cube.rotation.y += 0.01;
   renderer.render(scene, camera);
 }
 
-/**
- * check if the browser has WebGL support and run animate function
- */
-
 animate();
+
+//computeBoundingBox --> ausrechnen
