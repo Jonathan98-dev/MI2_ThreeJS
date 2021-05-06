@@ -12,7 +12,7 @@ const main = () => {
    */
   const box = generateBox(1, 1, 1);
   box.name = "box1";
-  box.position.y = box.geometry.parameters.height / 2; // Verschiebt die Box nach oben
+  box.position.z = -box.geometry.parameters.height / 2; // Verschiebt die Box nach oben
 
   /**
    * FLOOR
@@ -89,6 +89,7 @@ const generateMoon = () => {
  */
 const generateFloor = (w, d) => {
   const geo = new THREE.PlaneGeometry(w, d);
+  //A material for shiny surfaces with specular highlights.
   const mat = new THREE.MeshPhongMaterial({
     color: "rgb(100,100,100)", // RRGGBB
     side: THREE.DoubleSide,
@@ -107,7 +108,7 @@ const generateFloor = (w, d) => {
  */
 const generateBox = (w, h, d) => {
   const geo = new THREE.BoxGeometry(w, h, d);
-  const mat = new THREE.MeshPhongMaterial({ color: "rgb(100,100,100)" });
+  const mat = new THREE.MeshPhongMaterial({ color: "red" });
   const mesh = new THREE.Mesh(geo, mat);
   mesh.castShadow = true;
   return mesh;

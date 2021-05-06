@@ -1,22 +1,3 @@
-import { WEBGL } from "./WebGl.js";
-/**
- * loading 3D models
- */
-
-const loader = new THREE.GLTFLoader();
-
-//N.F.
-// loader.load(
-//   "./cube.glb",
-//   function (gltf) {
-//     scene.add(gltf.scene);
-//   },
-//   undefined,
-//   function (error) {
-//     console.error(error);
-//   }
-// );
-
 /**
  * setting up the scene
  */
@@ -35,7 +16,6 @@ camera.position.set(0, 0, 150);
 camera.lookAt(0, 0, 0);
 camera.position.y = 5;
 camera.position.x = 0;
-
 /**
  * setting up the renderer
  */
@@ -86,19 +66,37 @@ scene.add(light);
 /**
  * animates cube every frame
  */
+
+let moveRight = true;
+const setMovement = () => {
+  moveRight = !moveRight;
+  console.log(moveRight);
+};
 function animate() {
   requestAnimationFrame(animate);
-  cube.rotation.x += 0.01;
-  cube.rotation.y += 0.01;
+
+  if (cube.position.x <= 10 && moveRight) {
+    cube.position.x += 0.1;
+    if (cube.position.x >= 10) {
+      setMovement();
+      console.log("RIGHT");
+    }
+  }
+  if (!moveRight) {
+    cube.position.x += -0.1;
+    if (cube.position.x <= -10) {
+      setMovement();
+      console.log("LEFT");
+    }
+  }
+
+  // cube.rotation.x += 0.01;
+  // cube.rotation.y += 0.01;
   renderer.render(scene, camera);
 }
 
 /**
  * check if the browser has WebGL support and run animate function
  */
-if (WEBGL.isWebGLAvailable()) {
-  animate();
-} else {
-  const warning = WEBGL.getWebGLErrorMessager();
-  document.getElementById("container".appendChild(warning));
-}
+
+animate();
