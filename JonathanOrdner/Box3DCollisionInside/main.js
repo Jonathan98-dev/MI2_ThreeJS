@@ -1,29 +1,35 @@
 const main = () => {
+  //CREATING NEW SCENE AND GUI OBJECTS
   const scene = new THREE.Scene();
   const gui = new dat.GUI();
 
+  //CREATING OUTTERBOX
   const outterBox = generateBox(100, 100, 100, undefined, true);
   outterBox.name = "outterBox";
 
+  //CREATING INNERBOX
   const innerBox = generateBox(10, 10, 10, "red", false);
   innerBox.name = "innerBox";
   innerBox.position.x = 0;
   innerBox.position.y = 0;
   innerBox.position.z = 0;
 
+  //GETTING THE BOUNDINGBOX OF INNERBOX AND OUTTERBOX
   let boundingBox = generateBoundingBox(outterBox);
   let boundingBoxInnerBox = generateBoundingBox(innerBox);
 
-  //Variable GUI control
+  //CREATUBG VARIABLECONTROLS
   let moveSpeed;
   const variableControls = generateVariableControls(moveSpeed);
 
+  //CREATING LIGHT 1
   const dirLight = generateDirectionalLight("white", 1);
   dirLight.name = "light";
   dirLight.position.x = 8;
   dirLight.position.y = -2.5;
   dirLight.position.z = 7;
 
+  //CREATING LIGHT 2
   const dirLight2 = generateDirectionalLight("white", 1);
   dirLight2.name = "light2";
   dirLight2.position.x = -5;
@@ -31,15 +37,14 @@ const main = () => {
   dirLight2.position.z = -10;
   dirLight2.rotation.x = Math.PI / 2;
 
+  //ADDING ELEMENTS TO SCENE
   scene.add(outterBox);
   scene.add(innerBox);
   scene.add(dirLight);
   scene.add(dirLight2);
   gui.add(variableControls, "moveSpeed", 1);
 
-  /**
-   * CAMERA
-   */
+  //CREATING A CAMERA
   const camera = new THREE.PerspectiveCamera(
     45,
     window.innerWidth / window.innerHeight,
@@ -49,38 +54,32 @@ const main = () => {
   camera.position.x = -100;
   camera.position.y = 75;
   camera.position.z = -300;
-  camera.lookAt(new THREE.Vector3(0, 0, 0)); //Auf den Würfel schauen der in z= -5 ist
+  camera.lookAt(new THREE.Vector3(0, 0, 0)); //Looks at the cube
 
+  //CREATING A RENDERER
   const renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.shadowMap.enabled = true;
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setClearColor("rgb(60,60,60)");
   document.getElementById("webgl").append(renderer.domElement);
 
+  //CREATING MOUSEDRAG CONTROLS
   const controls = new THREE.OrbitControls(camera, renderer.domElement);
 
-  let boxIntersectsBox;
-  let distanceFromBorder = 1.25;
-
+  //Variables for inverting the movement of the inner cube and checking for collisions
+  let distanceFromBorder = innerBox.geometry.parameters.height * 1.5; //moves cube inside, 1.5* height
   let moveX = true;
   let moveY = true;
   let moveZ = true;
-  let maxX =
-    boundingBox.max.x -
-    innerBox.geometry.parameters.height / distanceFromBorder;
-  let minX =
-    boundingBox.min.x +
-    innerBox.geometry.parameters.height / distanceFromBorder;
 
-  let maxY =
-    boundingBox.max.y -
-    innerBox.geometry.parameters.height / distanceFromBorder;
-  let minY =
-    boundingBox.min.y +
-    innerBox.geometry.parameters.height / distanceFromBorder;
+  let maxX = boundingBox.max.x - distanceFromBorder;
+  let minX = boundingBox.min.x + distanceFromBorder;
 
-  let maxZ = boundingBox.max.z - innerBox.geometry.parameters.height;
-  let minZ = boundingBox.min.z + innerBox.geometry.parameters.height;
+  let maxY = boundingBox.max.y - distanceFromBorder;
+  let minY = boundingBox.min.y + distanceFromBorder;
+
+  let maxZ = boundingBox.max.z - distanceFromBorder;
+  let minZ = boundingBox.min.z + distanceFromBorder;
 
   /**
    * Animation Loop
@@ -142,12 +141,15 @@ const main = () => {
     innerBox.rotation.x += 0.01;
     innerBox.rotation.y += 0.01;
 
+    outterBox.rotation.x -= 0.01;
+    outterBox.rotation.y -= 0.01;
+
     requestAnimationFrame(() => {
       update(renderer, scene, camera);
     });
   };
 
-  update(renderer, scene, camera, innerBox);
+  update(renderer, scene, camera);
   console.log(scene);
 };
 
@@ -156,7 +158,9 @@ const main = () => {
  * @param {Width of Box} w
  * @param {Height of Box} h
  * @param {Depth of Box} d
- * @returns
+ * @param {Color of Box} color
+ * @param {Transparency} transparent
+ * @returns A Cube
  */
 const generateBox = (w, h, d, color, transparent) => {
   const geo = new THREE.BoxGeometry(w, h, d);
@@ -178,9 +182,13 @@ const generateBox = (w, h, d, color, transparent) => {
   return mesh;
 };
 
+/**
+ * Generates Gui controls for variable
+ * @param {variable to control} variableToControl
+ * @returns
+ */
 const generateVariableControls = (variableToControl) => {
   let moveSpeedInFunction = { moveSpeed: 1 };
-  console.log(moveSpeedInFunction.moveSpeed);
   return moveSpeedInFunction;
 };
 
@@ -199,7 +207,7 @@ const generateBoundingBox = (object) => {
  * Generates a new DirectionalLight
  * @param {COLOR OF LIGHT} color
  * @param {INTENSITY OF LIGHT} intensity
- * @returns
+ * @returns A directional lightsource
  */
 const generateDirectionalLight = (color, intensity) => {
   const light = new THREE.DirectionalLight(color, intensity);
