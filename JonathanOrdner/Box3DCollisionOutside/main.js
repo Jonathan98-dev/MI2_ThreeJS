@@ -57,11 +57,11 @@ const main = () => {
 
   let moveSpeed = 1;
 
-  const changeMoveSpeed = () => {
-    moveSpeed = Math.random() * 2 + 1;
-    console.log(moveSpeed);
-    return moveSpeed;
-  };
+  // const changeMoveSpeed = () => {
+  //   moveSpeed = Math.random() * 2 + 1;
+  //   console.log(moveSpeed);
+  //   return moveSpeed;
+  // };
 
   let moveX = true;
   let moveY = true;

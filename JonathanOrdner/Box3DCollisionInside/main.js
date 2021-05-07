@@ -1,17 +1,22 @@
 const main = () => {
   const scene = new THREE.Scene();
+  const gui = new dat.GUI();
 
-  const outterBox = generateBox(100, 100, 100, "red");
+  const outterBox = generateBox(100, 100, 100, undefined, true);
   outterBox.name = "outterBox";
 
-  const innerBox = generateBox(10, 10, 10, "white");
+  const innerBox = generateBox(10, 10, 10, "red", false);
   innerBox.name = "innerBox";
   innerBox.position.x = 0;
   innerBox.position.y = 0;
-  innerBox.position.z = -60;
+  innerBox.position.z = 0;
 
   let boundingBox = generateBoundingBox(outterBox);
   let boundingBoxInnerBox = generateBoundingBox(innerBox);
+
+  //Variable GUI control
+  let moveSpeed;
+  const variableControls = generateVariableControls(moveSpeed);
 
   const dirLight = generateDirectionalLight("white", 1);
   dirLight.name = "light";
@@ -30,6 +35,7 @@ const main = () => {
   scene.add(innerBox);
   scene.add(dirLight);
   scene.add(dirLight2);
+  gui.add(variableControls, "moveSpeed", 1);
 
   /**
    * CAMERA
@@ -53,33 +59,29 @@ const main = () => {
 
   const controls = new THREE.OrbitControls(camera, renderer.domElement);
 
-  let boxInBox;
-
-  let moveSpeed = 1;
-
-  const changeMoveSpeed = () => {
-    moveSpeed = Math.random() * 2 + 1;
-    console.log(moveSpeed);
-    return moveSpeed;
-  };
+  let boxIntersectsBox;
+  let distanceFromBorder = 1.25;
 
   let moveX = true;
   let moveY = true;
-  let moveZ = false;
-  let activeZ = false;
-  let activeX = true;
-  let activeY = true;
+  let moveZ = true;
+  let maxX =
+    boundingBox.max.x -
+    innerBox.geometry.parameters.height / distanceFromBorder;
+  let minX =
+    boundingBox.min.x +
+    innerBox.geometry.parameters.height / distanceFromBorder;
 
-  let maxX = boundingBox.max.x + innerBox.geometry.parameters.height;
-  let minX = boundingBox.min.x - innerBox.geometry.parameters.height;
+  let maxY =
+    boundingBox.max.y -
+    innerBox.geometry.parameters.height / distanceFromBorder;
+  let minY =
+    boundingBox.min.y +
+    innerBox.geometry.parameters.height / distanceFromBorder;
 
-  let maxY = boundingBox.max.y + innerBox.geometry.parameters.height;
-  let minY = boundingBox.min.y - innerBox.geometry.parameters.height;
+  let maxZ = boundingBox.max.z - innerBox.geometry.parameters.height;
+  let minZ = boundingBox.min.z + innerBox.geometry.parameters.height;
 
-  let maxZ = boundingBox.max.z + innerBox.geometry.parameters.height;
-  let minZ = boundingBox.min.z - innerBox.geometry.parameters.height;
-
-  console.log(minX, maxX);
   /**
    * Animation Loop
    * @param {RENDERER} renderer
@@ -91,79 +93,52 @@ const main = () => {
 
     // boundingBox = generateBoundingBox(outterBox);
     // boundingBoxInnerBox = generateBoundingBox(innerBox);
-    // boxInBox = boundingBox.intersectsBox(boundingBoxInnerBox);
 
-    if (moveX && activeX === true) {
-      // X-Axis MOVEMENT
-      innerBox.position.x += moveSpeed;
-
+    //X-Axis MOVEMENT
+    if (moveX) {
+      innerBox.position.x += variableControls.moveSpeed;
       if (innerBox.position.x >= maxX) {
         moveX = !moveX;
-        activeX = !activeX;
-        activeZ = !activeZ;
-        console.log(`x: ${activeX} y: ${activeZ} z:${activeZ}`);
       }
     }
 
-    if (!moveX && activeX === true) {
-      innerBox.position.x -= moveSpeed;
-
+    if (!moveX) {
+      innerBox.position.x -= variableControls.moveSpeed;
       if (innerBox.position.x <= minX) {
         moveX = !moveX;
-        activeX = !activeX;
-        activeZ = !activeZ;
-        activeY = !activeY;
-        console.log(`x: ${activeX} y: ${activeZ} z:${activeZ}`);
       }
     }
-
     //Y-AXIS MOVEMENT
 
-    if (moveY && activeY) {
-      innerBox.position.y += moveSpeed;
-      if (innerBox.position.y >= maxY) {
+    if (moveY) {
+      innerBox.position.y += variableControls.moveSpeed;
+      if (innerBox.position.y > maxY) {
         moveY = !moveY;
-        moveSpeed = changeMoveSpeed();
-        console.log(`x: ${activeX} y: ${activeZ} z:${activeZ}`);
       }
     }
-    if (!moveY && activeY) {
-      innerBox.position.y -= moveSpeed;
-      if (innerBox.position.y <= minY) {
+    if (!moveY) {
+      innerBox.position.y -= variableControls.moveSpeed;
+      if (innerBox.position.y < minY) {
         moveY = !moveY;
-        activeX = !activeX;
-        console.log(`x: ${activeX} y: ${activeZ} z:${activeZ}`);
       }
     }
 
     //Z-AXIS MOVEMENT
 
-    if (moveZ && activeZ === true) {
-      innerBox.position.z += moveSpeed;
-      if (innerBox.position.z >= maxZ) {
+    if (moveZ) {
+      innerBox.position.z += variableControls.moveSpeed;
+      if (innerBox.position.z > maxZ) {
         moveZ = !moveZ;
-        activeX = !activeX;
-        console.log(`x: ${activeX} y: ${activeZ} z:${activeZ}`);
+      }
+    }
+    if (!moveZ) {
+      innerBox.position.z -= variableControls.moveSpeed;
+      if (innerBox.position.z < minZ) {
+        moveZ = !moveZ;
       }
     }
 
-    if (!moveZ && activeZ === true) {
-      innerBox.position.z -= moveSpeed;
-      if (innerBox.position.z <= minZ) {
-        moveZ = !moveZ;
-        activeX = !activeX;
-        activeY = !activeY;
-        console.log(`x: ${activeX} y: ${activeZ} z:${activeZ}`);
-      }
-    }
-
-    //Activate activeY
-
-    // console.log(`x: ${activeX}, y: ${activeY}, z: ${activeY}`);
-
-    if (activeX && activeY && activeY) {
-      activeX = !activeZ;
-    }
+    //ROTATION
     innerBox.rotation.x += 0.01;
     innerBox.rotation.y += 0.01;
 
@@ -183,19 +158,30 @@ const main = () => {
  * @param {Depth of Box} d
  * @returns
  */
-const generateBox = (w, h, d, color) => {
+const generateBox = (w, h, d, color, transparent) => {
   const geo = new THREE.BoxGeometry(w, h, d);
   const edges = new THREE.EdgesGeometry(geo);
   const line = new THREE.LineSegments(
     edges,
     new THREE.LineBasicMaterial({ color: "black" })
   );
-  const mat = new THREE.MeshPhongMaterial({ color });
+  const mat = new THREE.MeshPhongMaterial({
+    color,
+    opacity: 0.2,
+    transparent,
+  });
   const mesh = new THREE.Mesh(geo, mat);
+  mesh.alphaMap = 0.5;
   mesh.castShadow = true;
   mesh.receiveShadow = true;
   mesh.add(line);
   return mesh;
+};
+
+const generateVariableControls = (variableToControl) => {
+  let moveSpeedInFunction = { moveSpeed: 1 };
+  console.log(moveSpeedInFunction.moveSpeed);
+  return moveSpeedInFunction;
 };
 
 /**
