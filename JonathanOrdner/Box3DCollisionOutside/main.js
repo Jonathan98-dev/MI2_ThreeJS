@@ -101,7 +101,6 @@ const main = () => {
         moveX = !moveX;
         activeX = !activeX;
         activeZ = !activeZ;
-        console.log(`x: ${activeX} y: ${activeZ} z:${activeZ}`);
       }
     }
 
@@ -113,7 +112,6 @@ const main = () => {
         activeX = !activeX;
         activeZ = !activeZ;
         activeY = !activeY;
-        console.log(`x: ${activeX} y: ${activeZ} z:${activeZ}`);
       }
     }
 
@@ -123,8 +121,6 @@ const main = () => {
       innerBox.position.y += moveSpeed;
       if (innerBox.position.y >= maxY) {
         moveY = !moveY;
-        moveSpeed = changeMoveSpeed();
-        console.log(`x: ${activeX} y: ${activeZ} z:${activeZ}`);
       }
     }
     if (!moveY && activeY) {
@@ -132,7 +128,6 @@ const main = () => {
       if (innerBox.position.y <= minY) {
         moveY = !moveY;
         activeX = !activeX;
-        console.log(`x: ${activeX} y: ${activeZ} z:${activeZ}`);
       }
     }
 
@@ -143,7 +138,6 @@ const main = () => {
       if (innerBox.position.z >= maxZ) {
         moveZ = !moveZ;
         activeX = !activeX;
-        console.log(`x: ${activeX} y: ${activeZ} z:${activeZ}`);
       }
     }
 
@@ -153,11 +147,8 @@ const main = () => {
         moveZ = !moveZ;
         activeX = !activeX;
         activeY = !activeY;
-        console.log(`x: ${activeX} y: ${activeZ} z:${activeZ}`);
       }
     }
-
-    //Activate activeY
 
     // console.log(`x: ${activeX}, y: ${activeY}, z: ${activeY}`);
 
