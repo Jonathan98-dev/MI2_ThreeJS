@@ -10,15 +10,12 @@ const main = () => {
   //CREATING INNERBOX
   const innerBox = generateBox(10, 10, 10, "red", false);
   innerBox.name = "innerBox";
-  innerBox.position.x = 0;
-  innerBox.position.y = 0;
-  innerBox.position.z = 0;
 
   //GETTING THE BOUNDINGBOX OF INNERBOX AND OUTTERBOX
   let boundingBox = generateBoundingBox(outterBox);
   let boundingBoxInnerBox = generateBoundingBox(innerBox);
 
-  //CREATUBG VARIABLECONTROLS
+  //CREATE VARIABLECONTROLS
   let moveSpeed;
   const variableControls = generateVariableControls(moveSpeed);
 
@@ -42,7 +39,7 @@ const main = () => {
   scene.add(innerBox);
   scene.add(dirLight);
   scene.add(dirLight2);
-  gui.add(variableControls, "moveSpeed", 1);
+  gui.add(variableControls, "moveSpeed");
 
   //CREATING A CAMERA
   const camera = new THREE.PerspectiveCamera(
@@ -54,7 +51,7 @@ const main = () => {
   camera.position.x = -100;
   camera.position.y = 75;
   camera.position.z = -300;
-  camera.lookAt(new THREE.Vector3(0, 0, 0)); //Looks at the cube
+  // camera.lookAt(new THREE.Vector3(0, 0, 0)); //Looks at the cube
 
   //CREATING A RENDERER
   const renderer = new THREE.WebGLRenderer({ antialias: true });
